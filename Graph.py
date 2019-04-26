@@ -49,17 +49,19 @@ while(run):
                 point = Node(i)
                 graph.append(point)
             for i in range(0, point_number):
-                if(graph[i].neighbors == max_edges):
-                    break
+                #if(graph[i].neighbors == max_edges):
+                 #   break
                 edge_count = random.randint(min_edges, max_edges)
+                if min_edges == max_edges:
+                    edge_count = min_edges
                 for j in range(0, edge_count):
                     add = True
                     while add:
                         edge = random.randint(0, point_number-1)
                         if not graph[i].contains_edge(edge):
-                            if not graph[edge].contains_edge(i) and edge is not i and graph[edge].neighbors is not max_edges:
+                            if not graph[edge].contains_edge(i) and edge is not i:
                                 graph[i].neighbors = graph[i].neighbors + 1
-                                graph[edge].neighbors = graph[edge].neighbors + 1
+                                #graph[edge].neighbors = graph[edge].neighbors + 1
                                 graph[i].add_edge(edge)
                                 add = False       
             print_graph(graph)
