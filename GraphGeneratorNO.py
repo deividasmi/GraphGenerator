@@ -56,32 +56,45 @@ class Tree(object):
         self.children.append(tree)
 
     
-    def printTree(self):
-        print(self.peak)
+    def __str__(self, level=0):
+        ret = "\t"*level+repr(self.peak)+"\n"
         for child in self.children:
-            child.printTree()            
+            ret += child.__str__(level+1)
+        return ret          
 
 
-def find(obj):
+def findSet1(obj):
         print("find")
         while not obj.parent is obj.peak:
             next_obj = obj.parent
             obj.parent = next_obj.parent
             obj = next_obj
         return obj
+
+
+def findSet(obj):
+        if obj.parent != obj:
+            return findSet(obj.parent)
+        else:
+            return obj.parent
         
 
 def union(x, y):
-        print("union")
-        xRoot = find(x)
-        yRoot = find(y)
-        if xRoot is yRoot:
-            return True
-        if xRoot.rank < yRoot.rank:
-            xRoot, yRoot = yRoot, xRoot
-        yRoot.parent = xRoot
-        if xRoot.rank is yRoot.rank:
-            xRoot.rank += 1
+        xRoot = findSet(x)
+        yRoot = findSet(y)
+        if not xRoot is yRoot:
+            if xRoot.rank < yRoot.rank:
+                xRoot.parent = yRoot
+                yRoot.add_child(xRoot)
+            elif xRoot.rank > yRoot.rank:
+                yRoot.parent = xRoot
+                xRoot.add_child(yRoot)
+            elif xRoot.rank == yRoot.rank:
+                xRoot.rank += 1
+                yRoot.parent = xRoot
+                xRoot.add_child(yRoot)
+
+
 
 class Edge():
 
@@ -145,6 +158,17 @@ def order_edges(edges):
                 temp = edges[i]
                 edges[i]=edges[j]
                 edges[j]=temp
+
+
+
+def KruskalMST(trees, edges):
+    for edge in edges:
+        if not findSet(trees[edge.peak_a]) is findSet(trees[edge.peak_b]):
+            x = findSet(trees[edge.peak_a])
+            y = findSet(trees[edge.peak_b])
+            #print("parents " + str(x.peak) + " " + str(y.peak))
+            #gprint(str(edge.peak_a) + " " + str(edge.peak_b))
+            union(trees[edge.peak_a], trees[edge.peak_b])
             
 
 run = True
@@ -231,7 +255,7 @@ while(run):
             trees = []
             edges = []
             for i in range(0,len(graph)):
-                print(graph[i].head)
+                #print(graph[i].head)
                 branch = Tree(graph[i].head)
                 trees.append(branch)
                 for j in range(0, len(graph[i].edges)):
@@ -240,8 +264,12 @@ while(run):
             order_edges(edges)
             for i in range(0, len(edges)):
                 print("{} : {} : {}".format(edges[i].peak_a, edges[i].peak_b, edges[i].weight))
-            print("testing union")
-            union(graph[1], graph[0])
+            KruskalMST(trees, edges)
+            for tree in trees:
+                print(tree)
+                print("End of tree")
+
+
 
                 
         except:
