@@ -1,5 +1,6 @@
 import sys
 import random
+#NOT Oriented graph
 
 class Node:
 
@@ -60,7 +61,23 @@ class Tree(object):
         ret = "\t"*level+repr(self.peak)+"\n"
         for child in self.children:
             ret += child.__str__(level+1)
-        return ret          
+        return ret 
+
+    def contains_peak(self, point):
+        if point == self.peak:
+            return True
+        for child in self.children:
+            if point == child.peak:
+                return True
+            child.contains_peak(point)
+        return False
+        
+    def find(self, point):
+        if self.peak is point: return True
+        for child in self.children:
+            p = child.find(point)
+            if p: return True
+        return False
 
 
 def findSet1(obj):
@@ -228,6 +245,7 @@ while(run):
             points = edges[0].split('.')
             node=Node(points[0])
             node.add_edge(points[1])
+            #node.add_weight(points[2])
             graph.append(node)
             for i in range(1, len(edges)):
                 points = edges[i].split('.')
@@ -246,6 +264,7 @@ while(run):
                     graph.append(node)
                 if not edge_exists:
                     node = Node(points[1])
+                    node.add_edge(points[0])
                     graph.append(node)
             print_graph(graph)
         except:
@@ -267,6 +286,12 @@ while(run):
             KruskalMST(trees, edges)
             for tree in trees:
                 print(tree)
+                for edge in reversed(edges):
+                    #if tree.contains_peak(edge.peak_a) and tree.contains_peak(edge.peak_b):
+                    #if tree.find(edge.peak_a).peak == edge.peak_a and tree.find(edge.peak_b).peak == edge.peak_b:
+                    if tree.find(edge.peak_a) and tree.find(edge.peak_b):
+                        print("{} {} : {}".format(edge.peak_a, edge.peak_b, edge.weight))
+                        break
                 print("End of tree")
 
 
