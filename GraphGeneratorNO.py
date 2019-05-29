@@ -80,15 +80,6 @@ class Tree(object):
         return False
 
 
-def findSet1(obj):
-        print("find")
-        while not obj.parent is obj.peak:
-            next_obj = obj.parent
-            obj.parent = next_obj.parent
-            obj = next_obj
-        return obj
-
-
 def findSet(obj):
         if obj.parent != obj:
             return findSet(obj.parent)
